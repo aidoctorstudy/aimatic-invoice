@@ -1,0 +1,152 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --surface: #f7f9fb;
+  --surface-strong: #eef2f5;
+  --foreground: #0b1220;
+  --foreground-muted: #5b6572;
+  --border: #e7ecf0;
+
+  /* Exact AI Matic logo colors. --brand-blue predates this and now holds the navy value —
+     kept under its old name so every existing text-brand-blue/bg-brand-blue class still
+     works; the hex is what defines it as navy now, not the variable name. */
+  --brand-teal: #1ca494;
+  --brand-blue: #0c284c;
+  --brand-accent: #1ca494;
+  --brand-teal-tint: #e8f6f4;
+
+  --glass-bg: rgba(255, 255, 255, 0.64);
+  --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-border: var(--border);
+  --color-brand-teal: var(--brand-teal);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-teal-tint: var(--brand-teal-tint);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Design is committed to a single light theme — no dark-mode variant */
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  /* clip, not hidden — hidden creates a new scroll container, which breaks the sticky/fixed
+     navbar's positioning context. clip prevents horizontal scroll the same way without that
+     side effect. This is a safety net; the real sources of overflow should still be fixed at
+     the source rather than relied on this to hide them. */
+  overflow-x: clip;
+}
+
+html[dir="rtl"] body {
+  font-family: var(--font-arabic-sans), var(--font-sans), Arial, Helvetica, sans-serif;
+  line-height: 1.8;
+}
+
+.brand-gradient {
+  background-image: linear-gradient(135deg, var(--brand-teal) 0%, var(--brand-blue) 100%);
+}
+
+.brand-gradient-text {
+  background-image: linear-gradient(135deg, var(--brand-teal) 0%, var(--brand-blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* backdrop-filter is expensive on weak/integrated GPUs — below desktop width (and on any
+   device whose GPU looks weak, see gpuWeak below), use a solid-enough translucent white
+   instead so panels still read clearly without the blur. */
+@media (max-width: 1023px) {
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+html[data-gpu-weak="true"] .glass-panel {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* The navbar's own frosted-glass look — same weak-GPU override, since it's always-mounted
+   and always animating (fixed position, scroll-visible the whole time). */
+html[data-gpu-weak="true"] .navbar-glass {
+  background: #ffffff;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@keyframes pricing-glow-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.pricing-glow {
+  background: conic-gradient(from 0deg, var(--brand-teal), var(--brand-blue), var(--brand-teal));
+  animation: pricing-glow-spin 5s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes magic-spark {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+  35% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1);
+  }
+  70% {
+    opacity: 0.4;
+    transform: translateY(-14px) scale(0.8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
